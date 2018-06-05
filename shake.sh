@@ -2,7 +2,7 @@
 #!/bin/sh
 
 v=0;r=0;b=0;a=0;x=0;n=0;d=0;
-
+adbPath='adb';
 
 usage() { 
 	echo "Usage:  $0  [-r] [-v] [-b] [-d] [-a] [-x] [-h] [-n]" 1>&2; exit 1; 
@@ -84,7 +84,7 @@ fi
 
 
 if [ "$r" -eq "1" ]; then
-	adb reverse tcp:8081 tcp:8081
+	$adbPath reverse tcp:8081 tcp:8081
       
     verbose "reversed tcp"
 fi
@@ -95,9 +95,9 @@ if [ "$x" -eq "1" ]; then
 fi
 
 if [ -z "$device" ]; then
-    adb shell input keyevent 82 --longpress
+    $adbPath shell input keyevent 82
     verbose "shake it all"
 else
-    adb -s $device shell input keyevent 82
+    $adbPath -s $device shell input keyevent 82
     verbose "operation performed using device $1"
 fi
