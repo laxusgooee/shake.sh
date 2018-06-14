@@ -3,6 +3,9 @@
 
 v=0;r=0;b=0;a=0;x=0;n=0;d=0;
 adbPath='adb';
+username=$(whoami);
+bundleDir='android/app/src/main/assets/';
+sdkDir="/Users/$username/Library/Android/sdk";
 
 usage() { 
 	echo "Usage:  $0  [-r] [-v] [-b] [-d] [-a] [-x] [-h] [-n]" 1>&2; exit 1; 
@@ -14,6 +17,31 @@ verbose() {
 		echo $1
 	fi
 }
+
+createFolder() {
+    if [ ! -d $1 ]; then
+        mkdir $1
+    fi
+}
+
+createFile() {
+    if [ ! -f $1 ]; then
+        touch $1
+    fi
+}
+
+if [ ! -f 'android/local.properties' ]; then
+    echo "no local config which is really neccesary...you have to create it"
+    read -p "so whats your sdk dir ($sdkDir)?" cusSdkDir
+
+    if [ -z "$cusSdkDir" ]; then
+        cusSdkDir=$sdkDir
+    fi
+
+    echo "sdk.dir = $cusSdkDir" > android/local.properties
+      
+    verbose "created config files"
+fi
 
 while getopts "rvbdaxhn:" o; do
     case "${o}" in
@@ -50,7 +78,6 @@ done
 shift $((OPTIND-1))
 
 device=$1
-npmPackage=$1
 
 if [ "$a" -eq "1" ]; then
     react-native run-android
@@ -77,11 +104,18 @@ if [ "$d" -eq "1" ]; then
 fi
 
 if [ "$b" -eq "1" ]; then
-    react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res
+
+    createFolder $bundleDir
+
+    bundleFile='index.android.bundle'
+
+    createFile "$bundleDir$bundleFile"
+    createFile "$bundleDir$bundleFile.meta"
+    
+    react-native bundle --platform android --dev false --entry-file index.js --bundle-output $bundleDir$bundleFile --assets-dest android/app/src/main/res
       
     verbose "built bundle for assets"
 fi
-
 
 if [ "$r" -eq "1" ]; then
 	$adbPath reverse tcp:8081 tcp:8081
