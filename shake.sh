@@ -2,10 +2,10 @@
 #!/bin/sh
 
 v=0;r=0;b=0;a=0;x=0;n=0;d=0;
-adbPath='adb';
 username=$(whoami);
 bundleDir='android/app/src/main/assets/';
 sdkDir="/Users/$username/Library/Android/sdk";
+adbPath="/Users/$username/Library/Android/sdk/platform-tools/adb";
 
 usage() { 
 	echo "Usage:  $0  [-r] [-v] [-b] [-d] [-a] [-x] [-h] [-n]" 1>&2; exit 1; 
